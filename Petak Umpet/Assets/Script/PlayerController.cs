@@ -10,16 +10,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Transform playerCamera = null;
     [SerializeField] float mouseSensitivity = 3.5f;
     [SerializeField] bool lockCursor = true;
-    [SerializeField] float walkSpeed = 6.0f;
     [SerializeField] float gravity = -13.0f;
     [SerializeField] [Range(0.0f, 5.0f)] float moveSmoothTime = 0.2f;
     [SerializeField] [Range(0.0f, 5.0f)] float mouseSmoothTime = 0.03f;
+    public float walkSpeed = 6.0f;
     float cameraPitch = 0.0f;
     float velocityY = 0.0f;
 
     CharacterController controller = null;
-    Vector2 currentDir = Vector2.zero;
-    Vector2 currentDirVelocity = Vector2.zero;
+    public Vector2 currentDir = Vector2.zero;
+    public Vector2 currentDirVelocity = Vector2.zero;
     Vector2 currentMouseDelta = Vector2.zero;
     Vector2 currentMouseDeltaVelocity = Vector2.zero;
 
