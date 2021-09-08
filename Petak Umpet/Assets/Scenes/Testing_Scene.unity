@@ -897,7 +897,7 @@ Transform:
   m_Children:
   - {fileID: 1804741023}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1621047427
 GameObject:
@@ -984,18 +984,17 @@ MonoBehaviour:
   gravity: -19.6133
   speed: 10
   jumpSpeed: 8
+  jumpFallOff:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   moveSmoothTime: 0.2
   mouseSmoothTime: 0.03
   walkSpeed: 6
-  groundCheck: {fileID: 7320466}
-  groundDistance: 0.4
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 0
   currentDir: {x: 0, y: 0}
   currentDirVelocity: {x: 0, y: 0}
-  jumpRememberTime: 0.2
-  groundedRememberTime: 0.2
 --- !u!1 &1625527066
 GameObject:
   m_ObjectHideFlags: 0
@@ -1265,7 +1264,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -90, z: 0}
 --- !u!1 &1804741019
 GameObject:
