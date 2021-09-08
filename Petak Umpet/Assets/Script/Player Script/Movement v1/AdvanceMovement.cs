@@ -17,6 +17,10 @@ public class AdvanceMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        PlayerSprint();
+    }
+
+    void PlayerSprint() {
         if (Input.GetKeyDown(KeyCode.LeftShift))
             playerController.walkSpeed += speedBoost;
         else if (Input.GetKeyUp(KeyCode.LeftShift))
