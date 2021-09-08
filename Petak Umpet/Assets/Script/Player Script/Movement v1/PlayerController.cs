@@ -11,24 +11,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float mouseSensitivity = 3.5f;
     [SerializeField] bool lockCursor = true;
     [SerializeField] float gravity = -13.0f;
-    [SerializeField]  float speed = 6.0F; // kecepatan
-    [SerializeField]  float jumpSpeed = 8.0F; // kecepatan loncat
+    [SerializeField] float speed = 6.0F; // kecepatan
+    [SerializeField] float jumpSpeed = 8.0F; // kecepatan loncat
+    [SerializeField] AnimationCurve jumpFallOff;
     [SerializeField] [Range(0.0f, 5.0f)] float moveSmoothTime = 0.2f;
     [SerializeField] [Range(0.0f, 5.0f)] float mouseSmoothTime = 0.03f;
     public float walkSpeed = 6.0f;
     float cameraPitch = 0.0f;
     float velocityY = 0.0f;
-
-    
-    //ground check
-    public Transform groundCheck; 
-    bool isGrounded; // Pernyataan GroundCheck
-    public float groundDistance = 0.4f; // Ground Distance
-    public LayerMask groundMask; // Ground layer Type
-    private Vector3 pos = Vector3.zero;
-    
-
-
 
     CharacterController controller = null;
     public Vector2 currentDir = Vector2.zero;
@@ -36,12 +26,22 @@ public class PlayerController : MonoBehaviour
     Vector2 currentMouseDelta = Vector2.zero;
     Vector2 currentMouseDeltaVelocity = Vector2.zero;
 
-    //coyote time
-    public float jumpRememberTime = 0.2f; 
-    private float jumpRememberTimer; 
+    //ground check
+    Transform groundCheck; 
+    bool isGrounded; // Pernyataan GroundCheck
+    float groundDistance = 0.4f; // Ground Distance
+    LayerMask groundMask; // Ground layer Type
+    Vector3 pos = Vector3.zero;
 
-    public float groundedRememberTime = 0.2f; 
-    private float groundedRememberTimer = 0f;
+    bool isJumping = false;
+
+
+    //coyote time
+    float jumpRememberTime = 0.2f; 
+    float jumpRememberTimer; 
+
+    float groundedRememberTime = 0.2f; 
+    float groundedRememberTimer = 0f;
 
     void Start()
     {
@@ -57,35 +57,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame          
     void Update()
     {
-        // Loncat
-        jumpRememberTimer -= Time.deltaTime; 
-
-        if (Input.GetButtonDown ("Jump"))   
-        jumpRememberTimer = jumpRememberTime; 
-
-        if (isGrounded)
-        groundedRememberTimer = groundedRememberTime; 
-        else
-        groundedRememberTimer -= Time.deltaTime; 
-
-        if (jumpRememberTimer > 0f && groundedRememberTimer > 0f)
-        {
-        pos.y = jumpSpeed;
-        }
-
-
-        // groundcheck
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-         if(isGrounded && velocityY < 0)
-         {
-             pos.y = -2f;
-         }
-
-        UpdateMouseLook();
-        UpdateMovement();
+        PlayerMouseLook();
+        PlayerMovement();
     }
 
-    void UpdateMouseLook() //camera
+    void PlayerMouseLook() //camera
     {
         // Vector2 mouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         Vector2 targetMouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
@@ -99,7 +75,7 @@ public class PlayerController : MonoBehaviour
         transform.Rotate(Vector3.up * currentMouseDelta.x * mouseSensitivity);
     }
 
-    void UpdateMovement() //pergerakan player
+    void PlayerMovement() //pergerakan player
     {
        
         Vector2 targetDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
@@ -115,6 +91,32 @@ public class PlayerController : MonoBehaviour
 
         controller.Move(velocity * Time.deltaTime);
 
+        PlayerJump();
+    }
 
+    void PlayerJump() 
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
+        {
+            isJumping = true;
+            StartCoroutine(JumpEvent());
+        }
+    }
+
+    private IEnumerator JumpEvent()
+    {
+        controller.slopeLimit = 90.0f;
+        float timeInAir = 0.0f;
+
+        do {
+
+            float jumpForce = jumpFallOff.Evaluate(timeInAir);
+            controller.Move(Vector3.up * jumpForce * jumpSpeed * Time.deltaTime);
+            timeInAir += Time.deltaTime;
+
+            yield return null;
+        } while (!controller.isGrounded && controller.collisionFlags != CollisionFlags.Above);
+        controller.slopeLimit = 45.0f;
+        isJumping = false;
     }
 }
