@@ -11,7 +11,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float mouseSensitivity = 3.5f;
     [SerializeField] bool lockCursor = true;
     [SerializeField] float gravity = -13.0f;
-    [SerializeField] float speed = 6.0F; // kecepatan
     [SerializeField] float jumpSpeed = 8.0F; // kecepatan loncat
     [SerializeField] AnimationCurve jumpFallOff;
     [SerializeField] [Range(0.0f, 5.0f)] float moveSmoothTime = 0.2f;
@@ -19,6 +18,8 @@ public class PlayerController : MonoBehaviour
     public float walkSpeed = 6.0f;
     float cameraPitch = 0.0f;
     float velocityY = 0.0f;
+
+    public Animator anim; //animasi
 
     CharacterController controller = null;
     public Vector2 currentDir = Vector2.zero;
@@ -59,9 +60,11 @@ public class PlayerController : MonoBehaviour
     {
         PlayerMouseLook();
         PlayerMovement();
+        PlayerAnimation();
     }
 
-    void PlayerMouseLook() //camera
+    //camera
+    void PlayerMouseLook() 
     {
         // Vector2 mouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         Vector2 targetMouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
@@ -75,7 +78,8 @@ public class PlayerController : MonoBehaviour
         transform.Rotate(Vector3.up * currentMouseDelta.x * mouseSensitivity);
     }
 
-    void PlayerMovement() //pergerakan player
+    //pergerakan player
+    void PlayerMovement()
     {
        
         Vector2 targetDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
@@ -93,7 +97,22 @@ public class PlayerController : MonoBehaviour
 
         PlayerJump();
     }
+    //player animasi controller 
+    void PlayerAnimation()
+    {
+        anim.SetFloat("float_vertical", Input.GetAxis("Vertical"));
 
+        anim.SetFloat("float_horizontal", Input.GetAxis ("Horizontal"));
+        /*
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+            anim.SetTrigger("trigger_jongkok");
+
+            else if (Input.GetKeyUp(KeyCode.LeftControl))
+                    anim.ResetTrigger("trigger_jongkok");
+        */
+    }
+
+    //player movement jump updater
     void PlayerJump() 
     {
         if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
@@ -103,6 +122,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //player movement jump event
     private IEnumerator JumpEvent()
     {
         controller.slopeLimit = 90.0f;
